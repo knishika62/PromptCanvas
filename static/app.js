@@ -93,6 +93,7 @@ const state = {
   },
   background: "",
   drag: null,
+  bboxOrderYX: true,
 };
 
 const els = {
@@ -129,6 +130,7 @@ const els = {
   textPreview: document.getElementById("textPreview"),
   copyTextBtn: document.getElementById("copyTextBtn"),
   exportTextBtn: document.getElementById("exportTextBtn"),
+  ideogramBboxCheck: document.getElementById("ideogramBboxCheck"),
   tabImage: document.getElementById("tabImage"),
   tabText: document.getElementById("tabText"),
   textGenPanel: document.getElementById("textGenPanel"),
@@ -286,16 +288,21 @@ function elementToJson(item) {
   const desc = item.description || item.label || "object";
   if (itemType === "text") {
     bbox = expandTextBbox(bbox);
+  }
+  // yx: [ymin,xmin,ymax,xmax] (Ideogram) / xy: [xmin,ymin,xmax,ymax] (standard/Krea2)
+  const outBbox = state.bboxOrderYX ? bbox : [bbox[1], bbox[0], bbox[3], bbox[2]];
+  if (itemType === "text") {
+    const textDesc = state.bboxOrderYX ? desc : `horizontal text, ${desc}`;
     return {
       type: "text",
-      bbox,
+      bbox: outBbox,
       text: item.text || item.label || "",
-      desc,
+      desc: textDesc,
     };
   }
   return {
     type: "obj",
-    bbox,
+    bbox: outBbox,
     desc,
   };
 }
@@ -1139,6 +1146,10 @@ els.copyTextBtn.addEventListener("click", () =>
   copyTextFrom(els.textPreview, els.copyTextBtn).catch(() => window.alert("Clipboard access was blocked."))
 );
 els.exportTextBtn.addEventListener("click", () => exportTextFrom(els.textPreview, "ideogram-prompt.txt", "text/plain"));
+els.ideogramBboxCheck.addEventListener("change", () => {
+  state.bboxOrderYX = els.ideogramBboxCheck.checked;
+  updateJson();
+});
 els.highLevelInput.addEventListener("input", () => updatePromptField("highLevel"));
 els.backgroundInput.addEventListener("input", () => updatePromptField("background"));
 els.stylePresetInput.addEventListener("change", () => {

@@ -118,6 +118,9 @@
           <div class="panel-head">
             <span class="eyebrow">JSON</span>
             <span id="jsonStatus" class="json-status">Valid</span>
+            <label class="bbox-order-label" title="チェックON: Ideogram形式 [ymin,xmin,ymax,xmax] / チェックOFF: 標準形式 [xmin,ymin,xmax,ymax] (Krea 2など)">
+              <input type="checkbox" id="ideogramBboxCheck" checked> Ideogram
+            </label>
             <div class="actions">
               <button id="copyBtn" type="button">Copy</button>
               <button id="exportBtn" type="button">Export</button>
@@ -138,6 +141,6 @@
       </aside>
     </main>
     <div id="appBadge" class="app-badge">PromptCanvas</div>
-    <script src="/static/app.js?v=20260612-presets"></script>
+    <script src="/static/app.js?v=20260629-bbox-order"></script>
   </body>
 </html>
