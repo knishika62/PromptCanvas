@@ -292,7 +292,13 @@ function elementToJson(item) {
   // yx: [ymin,xmin,ymax,xmax] (Ideogram) / xy: [xmin,ymin,xmax,ymax] (standard/Krea2)
   const outBbox = state.bboxOrderYX ? bbox : [bbox[1], bbox[0], bbox[3], bbox[2]];
   if (itemType === "text") {
-    const textDesc = state.bboxOrderYX ? desc : `horizontal text, ${desc}`;
+    let textDesc = desc;
+    if (!state.bboxOrderYX) {
+      // outBbox is [xmin, ymin, xmax, ymax]; prepend hint only for horizontal boxes
+      const bboxWidth = outBbox[2] - outBbox[0];
+      const bboxHeight = outBbox[3] - outBbox[1];
+      if (bboxWidth > bboxHeight) textDesc = `horizontal text, ${desc}`;
+    }
     return {
       type: "text",
       bbox: outBbox,
